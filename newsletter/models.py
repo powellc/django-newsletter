@@ -56,6 +56,7 @@ class Edition(models.Model):
         verbose_name = 'Edition'
         verbose_name_plural = 'Editions'
         ordering=('-published',)
+        get_latest_by='published'
     
     def __unicode__(self):
         return u'%s - %s' % (self.newsletter.name, self.published)

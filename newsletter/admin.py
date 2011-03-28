@@ -10,10 +10,9 @@ class NewsletterAdmin(admin.ModelAdmin):
 admin.site.register(Newsletter, NewsletterAdmin)
 
 class EditionAdmin(admin.ModelAdmin):
-    list_display = ('newsletter', 'edition', 'published',)
-    search_fields=('preview','edition',)
+    list_display = ('newsletter', 'published',)
+    search_fields=('preview','content',)
     list_filter=('newsletter',)
-    prepopulate_fields={"slug":('edition')}
 
 admin.site.register(Edition, EditionAdmin)
 

@@ -4,7 +4,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 import warnings
 from datetime import datetime
-
+from django_extensions.db.models import TimeStampedModel, TitleSlugDescriptionModel
+from myutils.models import MarkupMixin
 
 class Newsletter(models.Model):
     """
@@ -27,45 +28,51 @@ class Newsletter(models.Model):
     
     def __unicode__(self):
         return u'%s' % (self.name)
-    
 
-class Edition(models.Model):
+
+class Edition(MarkupMixin, TimeStampedModel):
     """
     An edition of a newsletter.
-    
+
     Editions can be uploaded as media files (pdf, jpg, etc..)
-    
+
     Along with the upload, the model also contains some optional
     fields that allow a basic summary of, and a photo from the newsletter
     to be presented.
-    
+
     In the future, a full templating system and text-based newsletters
     would be nice, but complicated.
     """
-    edition=models.CharField(_('edition'), max_length=40)
-    slug=models.SlugField(_('edition slug'))
+    title=models.CharField(_('Title'), max_length=100, blank=True, help_text="Leave this blank and we'll set it to the published month and year.")
     newsletter=models.ForeignKey(Newsletter)
     published=models.DateField(_('published'), default=datetime.now())
-    preview=models.TextField(_('preview'), blank=True, null=True)
     preview_image=models.ImageField(_('preview image'), upload_to="newsletter/previews/", blank=True, null=True)
     file=models.FileField(_('file'), upload_to="newsletter/newsletters/", blank=True, null=True)
-    created_on = models.DateTimeField(_("created on"), auto_now_add=True)
-    updated_on = models.DateTimeField(_("updated on"), auto_now_add=True, auto_now=True)
-    
+    content=models.TextField(_('Content'), blank=True, null=True)
+    rendered_content=models.TextField(_('Rendered content'), blank=True, null=True, editable=False)
+
     class Meta:
         verbose_name = 'Edition'
         verbose_name_plural = 'Editions'
-        ordering=('-published',)
         get_latest_by='published'
-    
+
+    class MarkupOptions:
+        source_field = 'content'
+        rendered_field = 'rendered_content'
+
+    def save(self, *args, **kwargs):
+        if not self.title:
+            self.title = self.published.strftime('%B %Y')
+        super(Edition, self).save(*args, **kwargs)
+
     def __unicode__(self):
-        return u'%s - %s' % (self.newsletter.name, self.published)
-    
+        return u'%s - %s' % (self.newsletter.name, self.title)
+
 
 class SubscriptionBase(models.Model):
     '''
     A newsletter subscription base.
-    
+
     '''
 
     subscribed = models.BooleanField(_('subscribed'), default=True)

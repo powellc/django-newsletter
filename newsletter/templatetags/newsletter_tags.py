@@ -4,7 +4,7 @@ from newsletter.models import Newsletter, Edition
 register = template.Library()
 
 def do_get_latest_newsletter(parser, token):
-    ''' Example usage: {% get_latest_newsletter for 'the-common' as newsletter %} '''
+    ''' Example usage: {% get_latest_newsletter for the-common as newsletter %} '''
 
     bits = token.contents.split()
     if len(bits) != 5:

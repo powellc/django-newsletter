@@ -1,24 +1,33 @@
 from setuptools import setup, find_packages
- 
+
 setup(
     name='django-newsletter',
-    version='0.3.0',
-    description='A basic, reusable newsletter subscription (opt-in/out) application.',
-    author='Kevin Fricovsky',
-    author_email='kfricovsky@gmail.com',
-    url='http://github.com/howiworkdaily/django-newsletter/tree/master',
-    packages=find_packages(),
+    version=__import__('newsletter').__version__,
+    license="BSD",
+
+    install_requires = ['django-markup-mixin','django-extensions',],
+
+    description='A simple reusable application for managing newsletters in a Django application.',
+    long_description=open('README.rst').read(),
+
+    author='Colin Powell',
+    author_email='colin@onecardinal.com',
+
+    url='http://github.com/powellc/django-newsletter',
+    download_url='http://github.com/powellc/django-newsletter/downloads',
+
+    include_package_data=True,
+
+    packages=['newsletter'],
+
+    zip_safe=True,
     classifiers=[
-        'Development Status :: Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Framework :: Django',
-    ],
-    include_package_data=True,
-    zip_safe=False,
-    install_requires=['setuptools'],
+    ]
 )
-

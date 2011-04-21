@@ -2,10 +2,11 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.auth.models import User
+from datetime import datetime, date
 import warnings
-from datetime import datetime
+
 from django_extensions.db.models import TimeStampedModel, TitleSlugDescriptionModel
-from myutils.models import MarkupMixin
+from markup_mixin.models import MarkupMixin
 
 class Newsletter(models.Model):
     """
@@ -19,6 +20,8 @@ class Newsletter(models.Model):
     org = models.CharField(_("organization"), max_length=100)
     about = models.TextField(_("about"), blank=True, null=True)
     editor = models.ForeignKey(User, related_name="editor")
+    default= models.BooleanField(_('Default'), default=False, 
+                    help_text='Your sites default newsletter')
     created_on = models.DateTimeField(_("created on"), auto_now_add=True)
     updated_on = models.DateTimeField(_("updated on"), auto_now_add=True, auto_now=True)
     
@@ -47,9 +50,10 @@ class Edition(MarkupMixin, TimeStampedModel):
     newsletter=models.ForeignKey(Newsletter)
     published=models.DateField(_('published'), default=datetime.now())
     preview_image=models.ImageField(_('preview image'), upload_to="newsletter/previews/", blank=True, null=True)
-    file=models.FileField(_('file'), upload_to="newsletter/newsletters/", blank=True, null=True)
-    content=models.TextField(_('Content'), blank=True, null=True)
+    preview=models.TextField(_('Preview'), blank=True, null=True)
+    content=models.TextField(_('Content'), blank=True, null=True, help_text='Add newsletter content here, using markup of your choice')
     rendered_content=models.TextField(_('Rendered content'), blank=True, null=True, editable=False)
+    file=models.FileField(_('file'), upload_to="newsletter/newsletters/", blank=True, null=True)
 
     class Meta:
         verbose_name = 'Edition'
@@ -99,9 +103,9 @@ class SubscriptionBase(models.Model):
         return u'%s' % (self.email)
         
     def save(self, *args, **kwargs):
-        self.updated_on = datetime.date.today()
+        self.updated_on = date.today()
         if not self.created_on:
-            self.created_on = datetime.date.today()
+            self.created_on = date.today()
         super(SubscriptionBase,self).save(*args, **kwargs)
 
 class Subscription(SubscriptionBase):

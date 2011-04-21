@@ -1,3 +1,4 @@
 include README.rst
 recursive-include newsletter/templates/newsletter * 
+recursive-include newsletter/templatetags * 
 recursive-include newsletter/core * 

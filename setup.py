@@ -8,7 +8,7 @@ setup(
     install_requires = ['django-markup-mixin','django-extensions',],
 
     description='A simple reusable application for managing newsletters in a Django application.',
-    long_description=open('README.rst').read(),
+    long_description=open('README.txt').read(),
 
     author='Colin Powell',
     author_email='colin@onecardinal.com',
